@@ -1,11 +1,10 @@
 ﻿// WorkshopControl.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
 //
 
-#include "pch.h"
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
-#include "steam/steam_api.h"
+#include "include/steam/steam_api.h"
 #include <chrono>
 #include <thread>
 
@@ -26,7 +25,7 @@ int main(int argc, char* argv[])
 	const PublishedFileId_t myAppID = (uint64)(strtoull(argv[3], &end, 10)); //meant to be stored in steam_appid.txt
 
 
-	const string INP_FILE = "steam_appid.txt"; // this file is required for steam_api.dll 
+	const string INP_FILE = "steam_appid.txt"; // this file is required for steam_api.dll
 	fstream myfile;
 	myfile.open(INP_FILE.c_str());
 	myfile << myAppID;
@@ -72,7 +71,7 @@ int main(int argc, char* argv[])
 				}
 			}
 		}
-		
+
 	}
 	else if (strcmp(argv[1], "-u") == 0) //unsubscribing item
 	{
