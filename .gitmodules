@@ -1,0 +1,3 @@
+[submodule "SteamworksSDKCI"]
+	path = SteamworksSDKCI
+	url = https://github.com/julianxhokaxhiu/SteamworksSDKCI.git
