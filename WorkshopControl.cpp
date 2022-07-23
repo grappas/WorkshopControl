@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
-#include "include/steam/steam_api.h"
+#include "_deps/steamworkssdk-src/include/steam/steam_api.h"
 #include <chrono>
 #include <thread>
 

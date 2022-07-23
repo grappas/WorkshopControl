@@ -3,5 +3,5 @@
 !/.gitignore
 !/README.md
 !/CMakeLists.txt
-!/SteamworksSDKCI
-!/.gitmodules
+!/cmake
+!/cmake/*
