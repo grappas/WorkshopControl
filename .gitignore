@@ -5,3 +5,5 @@
 !/CMakeLists.txt
 !/cmake
 !/cmake/*
+!/SteamworksSDKCI
+!/.gitmodules
