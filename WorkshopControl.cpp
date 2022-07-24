@@ -1,12 +1,47 @@
-﻿// WorkshopControl.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
-//
-
+﻿
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
 #include "_deps/steamworkssdk-src/include/steam/steam_api.h"
 #include <chrono>
 #include <thread>
+#include <getopt.h>
+
+class ParsedOptions
+{
+    public:
+
+    private:
+        bool subsribe_or_not = true;
+        bool wait_or_not = false;
+        PublishedFileId_t myAppID;
+        uint64 itemIDs;
+
+};
+
+bool ParseInputOptions (int argc, char **argv, ParsedOptions& toparse)
+{
+
+    int c;
+
+    while (true){
+        static struct option long_options[] =
+        {
+            {"help", no_argument, 0, 'h'},
+            {"subscribe", no_argument, 0, 's'},
+            {"unsubscribe", no_argument, 0, 'u'},
+            {"appid", required_argument, 0, 'a'},
+            {"wait", no_argument, 0, 'w'},
+            {0,0,0,0}
+        };
+
+        int option_index = 0;
+
+        c = getopt_long(argc,argv, "h:s:u:a:w:", long_options, &option_index);
+    }
+
+
+}
 
 
 using namespace std;
