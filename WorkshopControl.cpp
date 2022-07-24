@@ -1,4 +1,5 @@
-﻿#include <iostream>
+﻿#include <cstdlib>
+#include <iostream>
 #include <fstream>
 #include <stdio.h>
 #include "_deps/steamworkssdk-src/include/steam/steam_api.h"
@@ -26,6 +27,8 @@ class ParsedOptions
             unsubscribe = false;
             wait_or_not = false;
             myAppIDpresent = false;
+            toSubscribeItemIDs = nullptr;
+            toUnsubscribeItemIDs = nullptr;
         }
         ~ParsedOptions()
         {
@@ -73,6 +76,42 @@ class ParsedOptions
         bool checkmyAppID()
         {
             return myAppIDpresent;
+        }
+
+        bool populateItemIDs(char* list, bool subscribe)
+        {
+            char *end = nullptr;
+            end = (char *) malloc(sizeof(list));
+            strcpy(end,list);
+            size_t what_size_of_list = 0;
+            while (end[0] != '\0')
+            {
+                strtoull(end, &end, 10);
+                what_size_of_list++;
+            }
+
+            end = nullptr;
+            end = (char *) malloc(sizeof(list));
+            strcpy(end,list);
+
+            if (subscribe)
+            {
+                toSubscribeItemIDs = new uint64[what_size_of_list];
+                for (size_t i = 0 ; i < what_size_of_list ; i++)
+                {
+                    toSubscribeItemIDs[i] = strtoull(end, &end, 10);
+                    cout << toSubscribeItemIDs[i] << endl;
+                }
+            }
+            else // unsubscribe
+            {
+                toUnsubscribeItemIDs = new uint64[what_size_of_list];
+                for (size_t i = 0 ; i < what_size_of_list ; i++)
+                {
+                    toUnsubscribeItemIDs[i] = strtoull(end, &end, 10);
+                }
+            }
+            return true;
         }
 };
 
@@ -152,10 +191,12 @@ bool ParseInputOptions (int argc, char **argv, ParsedOptions& toparse)
 
             case 'u':
                 toparse.SetUnsubscribe();
+                toparse.populateItemIDs(optarg, false);
                 break;
 
             case 's':
                 toparse.SetSubscribe();
+                toparse.populateItemIDs(optarg, true);
                 break;
 
             case 'a':
@@ -182,7 +223,7 @@ bool ParseInputOptions (int argc, char **argv, ParsedOptions& toparse)
 
     if (!toparse.checkmyAppID())
     {
-        std::cout << "\nNo AppID giben.\n";
+        std::cout << "\nNo AppID given.\n";
         print_usage(argv[0]);
     }
     else if (!(toparse.checkSubscribe() || toparse.checkUnsubscribe()))
@@ -205,7 +246,7 @@ int main(int argc, char* argv[])
 	//if (argc < 5) {
 
 		//cerr << "Steam Workshop Control by Kun.\n\nSimple program to subscribe/download or unsubscribe Steam Workshop content.\n\nUsage:\n\n[-s|-u] [-w|-nw] [AppID] [ItemID]\n\n\t-s\tSubscribe content\n\t-u\tUnsubscribe content\n\t-w\tWait for download\n\t-nw\tDo not wait for download.\n\n";
-		//return 1;
+		//returnj 1;
 		////help page
 	//}
 
