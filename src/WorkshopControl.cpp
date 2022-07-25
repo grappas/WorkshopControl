@@ -2,12 +2,17 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
-#include "_deps/steamworkssdk-src/include/steam/steam_api.h"
+#include "../_deps/steamworkssdk-src/include/steam/isteamapps.h"
+#include "../_deps/steamworkssdk-src/include/steam/steam_api.h"
 #include <chrono>
 #include <thread>
 #include <getopt.h>
+#include <filesystem>
+#include <experimental/filesystem>
+#include "Filesystem.hpp"
 
 using namespace std;
+
 
 class ParsedOptions
 {
@@ -80,8 +85,8 @@ class ParsedOptions
 
         bool populateItemIDs(char* list, bool subscribe)
         {
-            char *end = nullptr;
-            end = (char *) malloc(sizeof(list));
+            char *end = (char *) malloc(sizeof(list));
+            char *end_backup = end;
             strcpy(end,list);
             size_t what_size_of_list = 0;
             while (end[0] != '\0')
@@ -90,8 +95,10 @@ class ParsedOptions
                 what_size_of_list++;
             }
 
+            free(end_backup);
             end = nullptr;
             end = (char *) malloc(sizeof(list));
+            end_backup = end;
             strcpy(end,list);
 
             if (subscribe)
@@ -100,9 +107,9 @@ class ParsedOptions
                 for (size_t i = 0 ; i < what_size_of_list ; i++)
                 {
                     toSubscribeItemIDs[i] = strtoull(end, &end, 10);
-                    cout << toSubscribeItemIDs[i] << endl;
                 }
             }
+
             else // unsubscribe
             {
                 toUnsubscribeItemIDs = new uint64[what_size_of_list];
@@ -111,10 +118,47 @@ class ParsedOptions
                     toUnsubscribeItemIDs[i] = strtoull(end, &end, 10);
                 }
             }
+
+            free(end_backup);
             return true;
+        }
+
+        PublishedFileId_t showAppID()
+        {
+            return myAppID;
         }
 };
 
+class FileOpen
+{
+
+    private:
+        fstream myfile;
+        const string INP_FILE = "steam_appid.txt";
+    public:
+        FileOpen(char** argv)
+        {
+            myfile.open(INP_FILE.c_str());
+
+            if(!myfile.is_open())
+            {
+                myfile.close();
+                myfile.open(INP_FILE.c_str(),ios::out);
+                myfile.open(INP_FILE.c_str(),ios::in | ios::out | ios::binary);
+            }
+        }
+        ~FileOpen()
+        {
+            myfile.close();
+            remove(INP_FILE.c_str());
+        }
+        bool PopulateWithAppID(ParsedOptions& toparse)
+        {
+            myfile << toparse.showAppID();
+            return true;
+        }
+
+};
 
 void print_usage ( char *name )
 {
@@ -240,8 +284,19 @@ bool ParseInputOptions (int argc, char **argv, ParsedOptions& toparse)
 int main(int argc, char* argv[])
 {
     ParsedOptions toparse;
+    FileOpen open_app_id(argv);
 
     ParseInputOptions(argc,argv,toparse);
+
+    open_app_id.PopulateWithAppID(toparse);
+
+    if (!SteamAPI_Init())
+    {
+        cerr << "Is your Steam Client running? Have you passed right AppID?\n\n";
+        return 1;
+    }
+
+    SteamAPI_Shutdown();
 
 	//if (argc < 5) {
 
