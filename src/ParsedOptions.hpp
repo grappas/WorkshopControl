@@ -1,4 +1,4 @@
-
+#pragma once
 #include "../_deps/steamworkssdk-src/include/steam/steam_api.h"
 
 class ParsedOptions
