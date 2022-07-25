@@ -5,6 +5,7 @@
 #include "../_deps/steamworkssdk-src/include/steam/isteamapps.h"
 #include "../_deps/steamworkssdk-src/include/steam/steam_api.h"
 #include <chrono>
+#include <string>
 #include <thread>
 #include <getopt.h>
 #include <filesystem>
@@ -133,28 +134,29 @@ class FileOpen
 {
 
     private:
-        fstream myfile;
+        fstream steam_appid;
         const string INP_FILE = "steam_appid.txt";
     public:
-        FileOpen(char** argv)
+        FileOpen()
         {
-            myfile.open(INP_FILE.c_str());
+            steam_appid.open(INP_FILE.c_str());
 
-            if(!myfile.is_open())
+            if(!steam_appid.is_open())
             {
-                myfile.close();
-                myfile.open(INP_FILE.c_str(),ios::out);
-                myfile.open(INP_FILE.c_str(),ios::in | ios::out | ios::binary);
+                steam_appid.close();
+                steam_appid.open(INP_FILE.c_str(),ios::out);
+                steam_appid.open(INP_FILE.c_str(),ios::in | ios::out | ios::binary);
             }
         }
         ~FileOpen()
         {
-            myfile.close();
+            steam_appid.close();
             remove(INP_FILE.c_str());
         }
         bool PopulateWithAppID(ParsedOptions& toparse)
         {
-            myfile << toparse.showAppID();
+            cout << toparse.showAppID() << endl;
+            steam_appid << to_string(toparse.showAppID()) + "\n";
             return true;
         }
 
@@ -284,7 +286,7 @@ bool ParseInputOptions (int argc, char **argv, ParsedOptions& toparse)
 int main(int argc, char* argv[])
 {
     ParsedOptions toparse;
-    FileOpen open_app_id(argv);
+    FileOpen open_app_id;
 
     ParseInputOptions(argc,argv,toparse);
 
@@ -311,10 +313,10 @@ int main(int argc, char* argv[])
 
 
 	//const string INP_FILE = "steam_appid.txt"; // this file is required for steam_api.dll
-	//fstream myfile;
-	//myfile.open(INP_FILE.c_str());
-	//myfile << myAppID;
-	//myfile.close();
+	//fstream steam_appid;
+	//steam_appid.open(INP_FILE.c_str());
+	//steam_appid << myAppID;
+	//steam_appid.close();
 
 
 	//if (!SteamAPI_Init())
