@@ -1,21 +1,16 @@
 ﻿#include <cstdlib>
 #include <iostream>
-#include <fstream>
 #include <stdio.h>
-#include "../_deps/steamworkssdk-src/include/steam/isteamapps.h"
 #include "../_deps/steamworkssdk-src/include/steam/steam_api.h"
 #include <chrono>
 #include <string>
 #include <thread>
-#include <getopt.h>
 #include "Filesystem.hpp"
 #include "steamAppIdOpen.hpp"
 #include "otherFunctions.hpp"
 #include "ParsedOptions.hpp"
 
 using namespace std;
-
-
 
 int main(int argc, char* argv[])
 {

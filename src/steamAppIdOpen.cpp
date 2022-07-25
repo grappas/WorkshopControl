@@ -13,6 +13,7 @@ steamAppIdOpen::steamAppIdOpen()
         steam_appid.close();
         steam_appid.open(INP_FILE.c_str(),ios::out);
         steam_appid.open(INP_FILE.c_str(),ios::in | ios::out | ios::binary);
+        steam_appid.close();
     }
 }
 steamAppIdOpen::~steamAppIdOpen()
@@ -22,7 +23,9 @@ steamAppIdOpen::~steamAppIdOpen()
 }
 bool steamAppIdOpen::PopulateWithAppID(ParsedOptions& toparse)
 {
+    steam_appid.open(INP_FILE.c_str());
     steam_appid << to_string(toparse.showAppID()) + "\n";
+    steam_appid.close();
     return true;
 }
 
