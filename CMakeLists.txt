@@ -13,7 +13,8 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE} CACHE PATH "E
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE} CACHE PATH "Library output path")
 
 include_directories("${PROJECT_SOURCE_DIR}")
-add_executable(WorkshopControl ${PROJECT_SOURCE_DIR}/src/WorkshopControl.cpp ${PROJECT_SOURCE_DIR}/src/Filesystem.hpp ${PROJECT_SOURCE_DIR}/src/Filesystem.cpp)
+file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp ${PROJECT_SOURCE_DIR}/src/*.h ${PROJECT_SOURCE_DIR}/src/*.hpp)
+add_executable(WorkshopControl ${SOURCES})
 
 target_link_libraries(WorkshopControl steamworks_sdk)
 

@@ -101,8 +101,9 @@ namespace PathImplementation {
         char *executablePathStr = new char[executablePath.length() + 1];
         strcpy(executablePathStr, executablePath.c_str());
         char* executableDir = dirname(executablePathStr);
+        std::string toreturn = std::string(executableDir);
         delete [] executablePathStr;
-        return std::string(executableDir);
+        return toreturn;
     }
 
     std::string mergePaths(std::string pathA, std::string pathB) {

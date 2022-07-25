@@ -11,124 +11,9 @@
 #include <filesystem>
 #include <experimental/filesystem>
 #include "Filesystem.hpp"
+#include "ParsedOptions.hpp"
 
 using namespace std;
-
-
-class ParsedOptions
-{
-    private:
-        bool subscribe;
-        bool unsubscribe;
-        bool wait_or_not;
-        bool myAppIDpresent;
-        PublishedFileId_t myAppID;
-        PublishedFileId_t* toSubscribeItemIDs;
-        PublishedFileId_t* toUnsubscribeItemIDs;
-
-    public:
-        ParsedOptions()
-        {
-            subscribe = false;
-            unsubscribe = false;
-            wait_or_not = false;
-            myAppIDpresent = false;
-            toSubscribeItemIDs = nullptr;
-            toUnsubscribeItemIDs = nullptr;
-        }
-        ~ParsedOptions()
-        {
-            delete toUnsubscribeItemIDs;
-            delete toSubscribeItemIDs;
-        }
-        bool SetSubscribe()
-        {
-            subscribe = true;
-            return true;
-        }
-        bool SetUnsubscribe()
-        {
-            unsubscribe = true;
-            return true;
-        }
-
-        bool SetWait()
-        {
-            wait_or_not = true;
-            return true;
-        }
-
-        PublishedFileId_t& SetAppID()
-        {
-            return myAppID;
-        }
-        bool SetmyAppIDpresent()
-        {
-            myAppIDpresent = true;
-            return true;
-        }
-
-        //interface for checking bool states:
-        //
-        bool checkSubscribe()
-        {
-            return subscribe;
-        }
-
-        bool checkUnsubscribe()
-        {
-            return unsubscribe;
-        }
-        bool checkmyAppID()
-        {
-            return myAppIDpresent;
-        }
-
-        bool populateItemIDs(char* list, bool subscribe)
-        {
-            char *end = (char *) malloc(sizeof(list));
-            char *end_backup = end;
-            strcpy(end,list);
-            size_t what_size_of_list = 0;
-            while (end[0] != '\0')
-            {
-                strtoull(end, &end, 10);
-                what_size_of_list++;
-            }
-
-            free(end_backup);
-            end = nullptr;
-            end = (char *) malloc(sizeof(list));
-            end_backup = end;
-            strcpy(end,list);
-
-            if (subscribe)
-            {
-                toSubscribeItemIDs = new uint64[what_size_of_list];
-                for (size_t i = 0 ; i < what_size_of_list ; i++)
-                {
-                    toSubscribeItemIDs[i] = strtoull(end, &end, 10);
-                }
-            }
-
-            else // unsubscribe
-            {
-                toUnsubscribeItemIDs = new uint64[what_size_of_list];
-                for (size_t i = 0 ; i < what_size_of_list ; i++)
-                {
-                    toUnsubscribeItemIDs[i] = strtoull(end, &end, 10);
-                }
-            }
-
-            free(end_backup);
-            return true;
-        }
-
-        PublishedFileId_t showAppID()
-        {
-            return myAppID;
-        }
-};
 
 class FileOpen
 {
@@ -185,15 +70,8 @@ void print_usage ( char *name )
         << std::endl;
 }
 
-bool ParseMods()
-{
-
-    return true;
-}
-
 bool ParseInputOptions (int argc, char **argv, ParsedOptions& toparse)
 {
-
     int c;
 
     while (true){
