@@ -27,6 +27,8 @@ void print_usage ( char *name )
         << name
         << std::endl
         << std::endl;
+
+    exit (EXIT_FAILURE);
 }
 
 bool ParseInputOptions (int argc, char **argv, ParsedOptions& toparse)
