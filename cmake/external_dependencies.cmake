@@ -194,8 +194,8 @@ endfunction()
 
 function(setup_steamworkssdk)
     FetchContent_Declare(steamworkssdk
-        URL https://github.com/julianxhokaxhiu/SteamworksSDKCI/releases/download/1.53/SteamworksSDK-v1.53.0_x64.zip
-        URL_HASH MD5=322c2c90c3ab76201c92f4a2c443f664
+        URL https://github.com/julianxhokaxhiu/SteamworksSDKCI/releases/download/1.54/SteamworksSDK-v1.54.0_x64.zip
+        URL_HASH MD5=699d7709edab4f7fe6bab56f9d5dc99a
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         )

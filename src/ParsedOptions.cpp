@@ -34,7 +34,7 @@ bool ParsedOptions::SetWait()
     return true;
 }
 
-PublishedFileId_t& ParsedOptions::SetAppID()
+AppId_t& ParsedOptions::SetAppID()
 {
     return myAppID;
 }
@@ -100,7 +100,7 @@ bool ParsedOptions::populateItemIDs(char* list, bool subscribe)
     return true;
 }
 
-PublishedFileId_t ParsedOptions::showAppID()
+AppId_t ParsedOptions::showAppID()
 {
     return myAppID;
 }

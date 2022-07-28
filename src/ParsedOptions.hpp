@@ -9,21 +9,20 @@ class ParsedOptions
         bool unsubscribe;
         bool wait_or_not;
         bool myAppIDpresent;
-        PublishedFileId_t myAppID;
+        AppId_t myAppID;
         PublishedFileId_t* toSubscribeItemIDs;
         PublishedFileId_t* toUnsubscribeItemIDs;
     public:
         ParsedOptions();
         ~ParsedOptions();
-
         bool SetSubscribe();
         bool SetUnsubscribe();
         bool SetWait();
-        PublishedFileId_t& SetAppID();
+        AppId_t& SetAppID();
         bool SetmyAppIDpresent();
         bool checkSubscribe();
         bool checkUnsubscribe();
         bool checkmyAppID();
         bool populateItemIDs(char* list, bool subscribe);
-        PublishedFileId_t showAppID();
+        AppId_t showAppID();
 };
