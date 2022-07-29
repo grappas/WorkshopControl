@@ -209,8 +209,12 @@ function(setup_steamworkssdk)
         set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/lib/steam/libsteam_api.dylib" PARENT_SCOPE)
         set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/lib/steam/libsteam_api.dylib")
     elseif(WIN32)
-        set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/lib/steam/steam_api64.lib" PARENT_SCOPE)
-        set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/lib/steam/steam_api64.lib")
+        set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/bin/steam/steam_api64.dll" PARENT_SCOPE)
+        set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/bin/steam/steam_api64.dll")
+        set_target_properties(steamworks_sdk PROPERTIES
+            IMPORTED_IMPLIB "${steamworkssdk_SOURCE_DIR}/lib/steam/steam_api64.lib"
+            IMPORTED_LOCATION "${steamworkssdk_SOURCE_DIR}/bin/steam/steam_api64.dll"
+            )
     else()
         set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/bin/steam/libsteam_api.so" PARENT_SCOPE)
         set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/bin/steam/libsteam_api.so")
@@ -218,7 +222,9 @@ function(setup_steamworkssdk)
     set_property(TARGET steamworks_sdk PROPERTY IMPORTED_LOCATION "${STEAMWORKS_LIB_PATH}")
 
     # Steamworks SDK headers contain a bunch of macros ending with additional ';'
+    if(NOT WIN32)
     target_compile_options(steamworks_sdk INTERFACE "-Wno-pedantic")
+endif()
 
     add_compile_options_to_target(COMPILER_ID Clang
                                   COMPILE_OPTIONS "-Wno-gnu-zero-variadic-macro-arguments"

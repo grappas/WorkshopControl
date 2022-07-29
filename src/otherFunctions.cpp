@@ -1,6 +1,16 @@
 
 #include <iostream>
+
+#ifdef __linux__
 #include <getopt.h>
+//linux code goes here
+#elif _WIN32
+// windows code goes here
+#include "getopt.h"
+#else
+
+#endif
+
 #include "otherFunctions.hpp"
 #include "ParsedOptions.hpp"
 

@@ -1,3 +1,6 @@
 [submodule "SteamworksSDKCI"]
 	path = SteamworksSDKCI
 	url = https://github.com/julianxhokaxhiu/SteamworksSDKCI
+[submodule "extern/cxxopts"]
+	path = extern/cxxopts
+	url = https://github.com/jarro2783/cxxopts
