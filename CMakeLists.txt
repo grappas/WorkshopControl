@@ -9,11 +9,8 @@ set(ProjectName "WorkshopControl")
 project(${ProjectName})
 setup_steamworkssdk()
 
-add_custom_command(
-    TARGET ${PROJECT_NAME}
-    COMMAND git submodule init
-    COMMAND git submodule update
-    )
+execute_process(COMMAND git submodule init)
+execute_process(COMMAND git submodule update)
 
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE} CACHE PATH "Executable output path")
