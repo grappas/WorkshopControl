@@ -21,7 +21,17 @@ target_include_directories(${ProjectName} PUBLIC cxxopts)
 
 target_link_libraries(${ProjectName}
     steamworks_sdk
-    cxxopts
-    )
+    cxxopts)
+
+
+if(MSVC)
+
+add_custom_command(
+     TARGET ${PROJECT_NAME}  POST_BUILD
+     COMMAND if $<CONFIG:Debug> neq 0 ("${CMAKE_COMMAND}" -E copy_if_different "${STEAMWORKS_LIB_PATH}" "${CMAKE_BINARY_DIR}/Debug")
+     COMMAND if $<CONFIG:Release> neq 0 ("${CMAKE_COMMAND}" -E copy_if_different "${STEAMWORKS_LIB_PATH}" "${CMAKE_BINARY_DIR}/Release")
+     COMMENT "Copying steam_api64.dll DLL"
+     )
+    endif()
 
 install (TARGETS WorkshopControl DESTINATION bin)

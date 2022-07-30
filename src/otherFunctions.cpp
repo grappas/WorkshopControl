@@ -1,18 +1,8 @@
 
 #include <iostream>
-
-#ifdef __linux__
-#include <getopt.h>
-//linux code goes here
-#elif _WIN32
-// windows code goes here
-#include "getopt.h"
-#else
-
-#endif
-
 #include "otherFunctions.hpp"
 #include "ParsedOptions.hpp"
+#include "../extern/cxxopts/include/cxxopts.hpp"
 
 using namespace std;
 
@@ -43,78 +33,90 @@ void print_usage ( char *name )
 
 bool ParseInputOptions (int argc, char **argv, ParsedOptions& toparse)
 {
-    int c;
+    cxxopts::Options options("WorkshopControl", "Simple tool for managing your subscriptions in Steam Workshop");
 
-    while (true){
-        static struct option long_options[] =
-        {
-            {"help", no_argument, 0, 'h'},
-            {"unsubscribe", required_argument, 0, 'u'},
-            {"subscribe", required_argument, 0, 's'},
-            {"appid", required_argument, 0, 'a'},
-            {"wait", no_argument, 0, 'w'},
-            {0,0,0,0}
-        };
+    options.add_options()
+        ("h,help", "Show this message.")
+        ("a,appid", "AppID of an app to work with. This switch is mandatory.")
+        ("s,subscribe", "\"<ItemIDs>\" Subscribe content.")
+        ("u,unsubscribe", "\"<ItemIDs>\" Unsubscribe content.")
+        ("w,wait", "Wait for download.")
+        ;
 
-        int option_index = 0;
 
-        c = getopt_long(argc,argv, "h:s:u:a:w:", long_options, &option_index);
 
-        if (c == -1)
-            break;
+    //int c;
 
-        switch (c)
-        {
+    //while (true){
+        //static struct option long_options[] =
+        //{
+            //{"help", no_argument, 0, 'h'},
+            //{"unsubscribe", required_argument, 0, 'u'},
+            //{"subscribe", required_argument, 0, 's'},
+            //{"appid", required_argument, 0, 'a'},
+            //{"wait", no_argument, 0, 'w'},
+            //{0,0,0,0}
+        //};
 
-            case 0:
-                /* If this option set a flag, do nothing else now. */
-                if (long_options[option_index].flag != 0)
-                    break;
-                printf ("option %s", long_options[option_index].name);
-                if (optarg)
-                    printf (" with arg %s", optarg);
-                printf ("\n");
-                break;
+        //int option_index = 0;
 
-            case 'h':
-                print_usage(argv[0]);
-                break;
+        //c = getopt_long(argc,argv, "h:s:u:a:w:", long_options, &option_index);
 
-            case 'w':
-                toparse.SetWait();
-                break;
+        //if (c == -1)
+            //break;
 
-            case 'u':
-                toparse.SetUnsubscribe();
-                toparse.populateItemIDs(optarg, false);
-                break;
+        //switch (c)
+        //{
 
-            case 's':
-                toparse.SetSubscribe();
-                toparse.populateItemIDs(optarg, true);
-                break;
+            //case 0:
+                //[> If this option set a flag, do nothing else now. <]
+                //if (long_options[option_index].flag != 0)
+                    //break;
+                //printf ("option %s", long_options[option_index].name);
+                //if (optarg)
+                    //printf (" with arg %s", optarg);
+                //printf ("\n");
+                //break;
 
-            case 'a':
-                if (optarg[0] == '-')
-                {
-                    printf ("Error: -%c: option requires an argument\n", c);
-                    print_usage(argv[0]);
-                }
-                if ((toparse.SetAppID() = strtoull (optarg, nullptr, 10)) == 0)
-                {
-                    printf("Error: -%c: invalid AppID\n", c);
-                    print_usage(argv[0]);
-                }
-                toparse.SetmyAppIDpresent();
-                break;
+            //case 'h':
+                //print_usage(argv[0]);
+                //break;
 
-            case '?':
-                /* getopt_long already printed an error message. */
-            case ':':
-            default:
-                print_usage(argv[0]);
-        }
-    }
+            //case 'w':
+                //toparse.SetWait();
+                //break;
+
+            //case 'u':
+                //toparse.SetUnsubscribe();
+                //toparse.populateItemIDs(optarg, false);
+                //break;
+
+            //case 's':
+                //toparse.SetSubscribe();
+                //toparse.populateItemIDs(optarg, true);
+                //break;
+
+            //case 'a':
+                //if (optarg[0] == '-')
+                //{
+                    //printf ("Error: -%c: option requires an argument\n", c);
+                    //print_usage(argv[0]);
+                //}
+                //if ((toparse.SetAppID() = strtoull (optarg, nullptr, 10)) == 0)
+                //{
+                    //printf("Error: -%c: invalid AppID\n", c);
+                    //print_usage(argv[0]);
+                //}
+                //toparse.SetmyAppIDpresent();
+                //break;
+
+            //case '?':
+                //[> getopt_long already printed an error message. <]
+            //case ':':
+            //default:
+                //print_usage(argv[0]);
+        //}
+    //}
 
     if (!toparse.checkmyAppID())
     {

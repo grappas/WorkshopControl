@@ -210,7 +210,7 @@ function(setup_steamworkssdk)
         set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/lib/steam/libsteam_api.dylib")
     elseif(WIN32)
         set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/bin/steam/steam_api64.dll" PARENT_SCOPE)
-        set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/bin/steam/steam_api64.dll")
+        set(STEAMWORKS_LIB_PATH "${steamworkssdk_SOURCE_DIR}/bin/steam/steam_api64.dll" CACHE INTERNAL "STEAMWORKS_LIB_PATH")
         set_target_properties(steamworks_sdk PROPERTIES
             IMPORTED_IMPLIB "${steamworkssdk_SOURCE_DIR}/lib/steam/steam_api64.lib"
             IMPORTED_LOCATION "${steamworkssdk_SOURCE_DIR}/bin/steam/steam_api64.dll"
