@@ -1,5 +1,6 @@
 #pragma once
 #include "../_deps/steamworkssdk-src/include/steam/steam_api.h"
+#include "../extern/cxxopts/include/cxxopts.hpp"
 #include <vector>
 #include <string>
 
@@ -17,7 +18,7 @@ class ParsedOptions
     private:
         bool force_download;
         bool force_deletion;
-        bool wait_or_not;
+        bool wait;
         bool ommit_item_errors;
         bool json;
         bool json_installed_only;
@@ -30,12 +31,11 @@ class ParsedOptions
         ~ParsedOptions();
         AppId_t& SetAppID();
         bool checkmyAppID();
-        bool populateItemIDs(char* list, jobType jobName );
-        bool SetWait();
         vector<PublishedFileId_t>& whatList(jobType jobName);
         AppId_t showAppID();
         bool populateItemIDs(
                 const vector<string> list_to_parse,
                 jobType jobName
         );
+        bool setTheRest(const cxxopts::ParseResult result);
 };

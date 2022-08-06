@@ -6,7 +6,7 @@
 #include <string>
 #include <thread>
 #include "steamAppIdOpen.hpp"
-#include "otherFunctions.hpp"
+#include "parsing.hpp"
 #include "ParsedOptions.hpp"
 
 using namespace std;
