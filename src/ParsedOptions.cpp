@@ -5,27 +5,18 @@
 
 ParsedOptions::ParsedOptions()
 {
-    subscribe = false;
-    unsubscribe = false;
+    force_download = false;
+    force_deletion = false;
+    ommit_item_errors = false;
+    json = false;
+    json_installed_only = false;
     wait_or_not = false;
-    myAppIDpresent = false;
-    toSubscribeItemIDs = nullptr;
-    toUnsubscribeItemIDs = nullptr;
+    toSubscribeItemIDs.clear();
+    toUnsubscribeItemIDs.clear();
+    toSyncItemIDs.clear();
 }
 ParsedOptions::~ParsedOptions()
 {
-    delete toUnsubscribeItemIDs;
-    delete toSubscribeItemIDs;
-}
-bool ParsedOptions::SetSubscribe()
-{
-    subscribe = true;
-    return true;
-}
-bool ParsedOptions::SetUnsubscribe()
-{
-    unsubscribe = true;
-    return true;
 }
 
 bool ParsedOptions::SetWait()
@@ -38,65 +29,41 @@ AppId_t& ParsedOptions::SetAppID()
 {
     return myAppID;
 }
-bool ParsedOptions::SetmyAppIDpresent()
+
+vector<PublishedFileId_t>& ParsedOptions::whatList(jobType jobName)
 {
-    myAppIDpresent = true;
-    return true;
+    if (jobName == jobType::subscribe)
+    {
+        return toSubscribeItemIDs;
+    }
+    else if (jobName == jobType::unsubscribe)
+    {
+        return toUnsubscribeItemIDs;
+    }
+    else
+    {
+        return toSyncItemIDs;
+    }
 }
 
 //interface for checking bool states:
 //
-bool ParsedOptions::checkSubscribe()
-{
-    return subscribe;
-}
 
-bool ParsedOptions::checkUnsubscribe()
+bool ParsedOptions::populateItemIDs(
+        const vector<string> list_to_parse,
+        jobType jobName
+        )
 {
-    return unsubscribe;
-}
-bool ParsedOptions::checkmyAppID()
-{
-    return myAppIDpresent;
-}
-
-bool ParsedOptions::populateItemIDs(char* list, bool subscribe)
-{
-    char *end = (char *) malloc(sizeof(list));
-    char *end_backup = end;
-    strcpy(end,list);
-    size_t what_size_of_list = 0;
-    while (end[0] != '\0')
+    if(list_to_parse.size() == 0)
     {
-        strtoull(end, &end, 10);
-        what_size_of_list++;
+        return false;
+    }
+    else
+    {
+        for (unsigned int i = 0; i < list_to_parse.size() ; i++)
+            whatList(jobName).push_back(stoull(list_to_parse[i]));
     }
 
-    free(end_backup);
-    end = nullptr;
-    end = (char *) malloc(sizeof(list));
-    end_backup = end;
-    strcpy(end,list);
-
-    if (subscribe)
-    {
-        toSubscribeItemIDs = new uint64[what_size_of_list];
-        for (size_t i = 0 ; i < what_size_of_list ; i++)
-        {
-            toSubscribeItemIDs[i] = strtoull(end, &end, 10);
-        }
-    }
-
-    else // unsubscribe
-    {
-        toUnsubscribeItemIDs = new uint64[what_size_of_list];
-        for (size_t i = 0 ; i < what_size_of_list ; i++)
-        {
-            toUnsubscribeItemIDs[i] = strtoull(end, &end, 10);
-        }
-    }
-
-    free(end_backup);
     return true;
 }
 

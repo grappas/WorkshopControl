@@ -13,10 +13,11 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+    cerr << endl;
     ParsedOptions toparse;
     steamAppIdOpen open_app_id;
 
-    ParseInputOptions(argc,argv,toparse);
+    parse_input_options(argc,argv,toparse);
 
     open_app_id.PopulateWithAppID(toparse);
 
