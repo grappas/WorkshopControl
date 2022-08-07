@@ -11,11 +11,9 @@ ParsedOptions::ParsedOptions()
     wait = false;
     toSubscribeItemIDs.clear();
     toUnsubscribeItemIDs.clear();
-    toSyncItemIDs.clear();
 }
 ParsedOptions::~ParsedOptions()
 {
-    toSyncItemIDs.clear();
     toSubscribeItemIDs.clear();
     toUnsubscribeItemIDs.clear();
 }
@@ -27,17 +25,13 @@ AppId_t& ParsedOptions::SetAppID()
 
 vector<PublishedFileId_t>& ParsedOptions::whatList(jobType jobName)
 {
-    if (jobName == jobType::subscribe)
-    {
-        return toSubscribeItemIDs;
-    }
-    else if (jobName == jobType::unsubscribe)
+    if (jobName == jobType::unsubscribe)
     {
         return toUnsubscribeItemIDs;
     }
     else
     {
-        return toSyncItemIDs;
+        return toSubscribeItemIDs;
     }
 }
 
@@ -67,7 +61,7 @@ AppId_t ParsedOptions::showAppID()
     return myAppID;
 }
 
-bool ParsedOptions::setTheRest(const cxxopts::ParseResult result)
+bool ParsedOptions::setTheRest(const cxxopts::ParseResult result, const bool tosync)
 {
     force_download = result["force_download"].as<bool>();
     force_deletion = result["force_deletion"].as<bool>();
@@ -75,5 +69,6 @@ bool ParsedOptions::setTheRest(const cxxopts::ParseResult result)
     json = result["json"].as<bool>();
     json_installed_only = result["json_installed_only"].as<bool>();
     wait = result["wait"].as<bool>();
+    sync = tosync;
     return true;
 }

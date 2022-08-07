@@ -10,7 +10,6 @@ enum class jobType
 {
     subscribe,
     unsubscribe,
-    sync
 };
 
 class ParsedOptions
@@ -22,10 +21,10 @@ class ParsedOptions
         bool ommit_item_errors;
         bool json;
         bool json_installed_only;
+        bool sync;
         AppId_t myAppID;
         vector<PublishedFileId_t> toSubscribeItemIDs;
         vector<PublishedFileId_t> toUnsubscribeItemIDs;
-        vector<PublishedFileId_t> toSyncItemIDs;
     public:
         ParsedOptions();
         ~ParsedOptions();
@@ -37,5 +36,5 @@ class ParsedOptions
                 const vector<string> list_to_parse,
                 jobType jobName
         );
-        bool setTheRest(const cxxopts::ParseResult result);
+        bool setTheRest(const cxxopts::ParseResult result, const bool tosync);
 };

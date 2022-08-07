@@ -1,6 +1,8 @@
 
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <iterator>
 #include <string>
 #include <vector>
 #include "parsing.hpp"
@@ -17,19 +19,66 @@ bool stirr_em_up( //funtion resolves collisions in lists. If mod appears on more
         bool prefer_deletion
         )
 {
-    if(!prefer_deletion)
+    bool isempty = sync.empty(); //sync switch (obsolete)
+
+    //get rid of duplicates inside lists
+    //
+    sort(subscribe.begin(),subscribe.end());
+    sort(unsubscribe.begin(),unsubscribe.end());
+    sort(sync.begin(),sync.end());
+
+    vector<string>::iterator it_subscribe = unique(subscribe.begin(),subscribe.end());
+    vector<string>::iterator it_unsubscribe = unique(unsubscribe.begin(),unsubscribe.end());
+    vector<string>::iterator it_sync = unique(sync.begin(),sync.end());
+
+    subscribe.resize(distance(subscribe.begin(),it_subscribe));
+    unsubscribe.resize(distance(unsubscribe.begin(),it_unsubscribe));
+    sync.resize(distance(sync.begin(),it_sync));
+
+    if (!sync.empty())// make sure that there's no duplicates between sync and subscribe
     {
-        for (auto it = unsubscribe.begin();it != unsubscribe.end();it++){
-            for (auto ite = subscribe.begin();ite != subscribe.end();ite++){
-                if (*it == *ite)
+        for (auto it = subscribe.begin();it != subscribe.end();it++)
+        {
+            for (auto ite = sync.begin(); ite != sync.end();)
+            {
+                if(*it == *ite)
                 {
-                    it = unsubscribe.erase(it);
+                    ite = sync.erase(ite);
+                }
+                else
+                {
+                    ite++;
                 }
             }
-            for (auto ite = sync.begin();ite != sync.end();ite++){
+        }
+    }
+
+    //merge subscibe and sync, sync no longer needed, as we already determined sync behaviour
+    //
+    vector<string> merged(subscribe.size() + sync.size());
+
+    merge(
+            subscribe.begin(),
+            subscribe.end(),
+            sync.begin(),
+            sync.end(),
+            merged.begin()
+            );
+
+    subscribe = merged;
+
+
+    if(!prefer_deletion) // resolve duplicates between subscribe and unsubscribe
+    {
+        for (auto it = subscribe.begin();it != subscribe.end();it++){
+            for (auto ite = unsubscribe.begin();ite != unsubscribe.end();){
                 if (*it == *ite)
                 {
-                    it = unsubscribe.erase(it);
+                    ite = unsubscribe.erase(ite);
+                }
+                else
+                {
+                    ite++;
                 }
             }
         }
@@ -47,20 +96,11 @@ bool stirr_em_up( //funtion resolves collisions in lists. If mod appears on more
                     ite++;
                 }
             }
-            for (auto ite = sync.begin();ite != sync.end();){
-                if (*it == *ite)
-                {
-                    ite = sync.erase(ite);
-                }
-                else
-                {
-                    ite++;
-                }
-            }
         }
     }
 
-    return true;
+
+    return !isempty; // switch for sync behaviour
 }
 
 
@@ -136,7 +176,7 @@ bool parse_input_options (
         ("appid", "AppID of an app to work with. This switch is mandatory.", cxxopts::value<string>()->default_value("0"))
         ("s,subscribe", "Subscribe content.", cxxopts::value<vector<string>>() )
         ("u,unsubscribe", "\"<ItemIDs>\" Unsubscribe content.", cxxopts::value<vector<string>>() )
-        ("S,sync", "\"<ItemIDs>\" Subscribes missing content, unsubscribes content not passed on the list.\nAt least one of three mentioned above have to be armed for app to work. Pass itemIDs separated by commas.", cxxopts::value<vector<string>>() )
+        ("S,sync", "\"<ItemIDs>\" Subscribes missing content, unsubscribes remaining, downloaded content not passed on the list. Please note that passing this argument makes --subscribe behaving like sync.\nAt least one of three mentioned above have to be armed for app to work. Pass itemIDs separated by commas.", cxxopts::value<vector<string>>() )
         ;
 
     options.parse_positional({"appid"});
@@ -144,6 +184,8 @@ bool parse_input_options (
     options.allow_unrecognised_options();
 
     auto result = options.parse(argc,argv);
+
+    bool tosync = result.count("sync");
 
     if (result.count("help"))
         print_usage(argv[0], options, EXIT_SUCCESS);
@@ -226,85 +268,24 @@ bool parse_input_options (
     cerr.setf(ios::boolalpha);
     cerr << "Subscribe: " << toparse.populateItemIDs(temp_itemid_vector_subscribe,jobType::subscribe) << endl;
     cerr << "Unsubscribe: " << toparse.populateItemIDs(temp_itemid_vector_unsubscribe,jobType::unsubscribe) << endl;
-    cerr << "Sync: " << toparse.populateItemIDs(temp_itemid_vector_sync,jobType::sync) << endl << endl;
 
-    toparse.setTheRest(result);
+    if(tosync)
+    {
+        if(result.count("prefer_deletion"))
+        {
+            cerr << "Caution! Sync is armed.\n";
+        }
+        else
+        {
+            cerr << "Caution! Sync is armed. --unsubscribe argument ignored.\n";
+        }
+    }
+
+    toparse.setTheRest(result, tosync);
+
+    cerr << endl;
 
     print_usage(argv[0], options, EXIT_SUCCESS);
-
-
-    //int c;
-
-    //while (true){
-        //static struct option long_options[] =
-        //{
-            //{"help", no_argument, 0, 'h'},
-            //{"unsubscribe", required_argument, 0, 'u'},
-            //{"subscribe", required_argument, 0, 's'},
-            //{"appid", required_argument, 0, 'a'},
-            //{"wait", no_argument, 0, 'w'},
-            //{0,0,0,0}
-        //};
-
-        //int option_index = 0;
-
-        //c = getopt_long(argc,argv, "h:s:u:a:w:", long_options, &option_index);
-
-        //if (c == -1)
-            //break;
-
-        //switch (c)
-        //{
-
-            //case 0:
-                //[> If this option set a flag, do nothing else now. <]
-                //if (long_options[option_index].flag != 0)
-                    //break;
-                //printf ("option %s", long_options[option_index].name);
-                //if (optarg)
-                    //printf (" with arg %s", optarg);
-                //printf ("\n");
-                //break;
-
-            //case 'h':
-                //print_usage(argv[0]);
-                //break;
-
-            //case 'w':
-                //toparse.SetWait();
-                //break;
-
-            //case 'u':
-                //toparse.SetUnsubscribe();
-                //toparse.populateItemIDs(optarg, false);
-                //break;
-
-            //case 's':
-                //toparse.SetSubscribe();
-                //toparse.populateItemIDs(optarg, true);
-                //break;
-
-            //case 'a':
-                //if (optarg[0] == '-')
-                //{
-                    //printf ("Error: -%c: option requires an argument\n", c);
-                    //print_usage(argv[0]);
-                //}
-                //if ((toparse.SetAppID() = strtoull (optarg, nullptr, 10)) == 0)
-                //{
-                    //printf("Error: -%c: invalid AppID\n", c);
-                    //print_usage(argv[0]);
-                //}
-                //toparse.SetmyAppIDpresent();
-                //break;
-
-            //case '?':
-                //[> getopt_long already printed an error message. <]
-            //case ':':
-            //default:
-                //print_usage(argv[0]);
-        //}
-    //}
 
     return true;
 }
