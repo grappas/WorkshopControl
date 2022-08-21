@@ -1,14 +1,27 @@
 #include "modProperties.hpp"
+#include <cstdio>
+#include <cstring>
 
-modProperties::modProperties(PublishedFileId_t const parsedItemID)
+modProperties::modProperties(const PublishedFileId_t parsedItemID, bool ommit_item_errors)
 {
-    auto to_parse = parsedItemID;
-    auto const handle = SteamUGC()->CreateQueryUGCDetailsRequest(&to_parse,1);
+    ItemID = parsedItemID;
+    PublishedFileId_t item_id[1];
+    item_id[0] = ItemID;
+    auto const handle = SteamUGC()->CreateQueryUGCDetailsRequest(item_id,1);
 
     if (handle == k_UGCQueryHandleInvalid)
     {
-        cerr << "exception in modProperties constructor(" << parsedItemID << "): SteamUGC()->CreateQueryUGCDetailsRequest returned invalid handle\n";
-        exit (EXIT_FAILURE);
+        cerr << "exception in modProperties constructor(" << parsedItemID << "): SteamUGC()->CreateQueryUGCDetailsRequest returned invalid handle.";
+        if(!ommit_item_errors)
+        {
+            cerr << endl;
+            exit (EXIT_FAILURE);
+        }
+        else
+        {
+            cerr << " Ommitting..." << endl;
+            proper_item = false;
+        }
     }
 
     auto const result = SteamUGC()->SendQueryUGCRequest(handle);
@@ -17,21 +30,48 @@ modProperties::modProperties(PublishedFileId_t const parsedItemID)
     {
         SteamUGC()->ReleaseQueryUGCRequest(handle);
         cerr << "exception in modProperties constructor(" << parsedItemID << "): SteamUGC()->SendQueryUGCRequest returned invalid call\n";
-        exit (EXIT_FAILURE);
+        if(!ommit_item_errors)
+        {
+            cerr << endl;
+            exit (EXIT_FAILURE);
+        }
+        else
+        {
+            cerr << " Ommitting..." << endl;
+            proper_item = false;
+        }
     }
     else
     {
+        proper_item = true;
         SteamUGCDetails_t details;
-        SteamUGC()->GetQueryUGCResult(handle, 1, &details);
-        item_name = details.m_rgchTitle;
+        SteamUGC()->GetQueryUGCResult(handle, 0, &details);
+        item_name.assign(details.m_rgchTitle,k_cchPublishedDocumentTitleMax);
         remote_time_stamp = details.m_rtimeUpdated;
     }
 
     SteamUGC()->GetItemInstallInfo(parsedItemID, nullptr, nullptr, 1 , &local_time_stamp);
+    what_state = SteamUGC()->GetItemState(ItemID);
 
 }
 
 modProperties::~modProperties()
 {
 
+}
+
+void modProperties::print_properties()
+{
+
+    if (proper_item) {
+        cerr << "ItemID: " << ItemID << endl
+            << "State: " << what_state << endl
+            << "local_time_stamp: " << local_time_stamp << endl
+            << "remote_time_stamp: " << local_time_stamp << endl
+            << "item_name: " << item_name << endl
+            ;
+    }
+    else {
+        cerr << "Item: " << ItemID << " incorrect." << endl;
+    }
 }

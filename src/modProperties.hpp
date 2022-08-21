@@ -12,13 +12,16 @@ class modProperties
     private:
 
         PublishedFileId_t ItemID;
-        uint32 local_time_stamp;
+        uint32 what_state; //done
+        uint32 local_time_stamp; // done
         uint32 remote_time_stamp;
-        string item_name;
+        string item_name; //done
+        bool proper_item;
 
     public:
 
-        modProperties(PublishedFileId_t const parsedItemID);
+        modProperties(const PublishedFileId_t parsedItemID, bool ommit_item_errors);
         ~modProperties();
+        void print_properties();
 
 };

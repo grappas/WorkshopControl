@@ -285,7 +285,5 @@ bool parse_input_options (
 
     cerr << endl;
 
-    print_usage(argv[0], options, EXIT_SUCCESS);
-
     return true;
 }

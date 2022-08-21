@@ -8,6 +8,7 @@
 #include "steamAppIdOpen.hpp"
 #include "parsing.hpp"
 #include "ParsedOptions.hpp"
+#include "modProperties.hpp"
 
 using namespace std;
 
@@ -26,6 +27,10 @@ int main(int argc, char* argv[])
         cerr << "Is your Steam Client running? Have you passed right AppID?\n\n";
         return 1;
     }
+
+    modProperties chuj(463939057,true);
+    chuj.print_properties();
+
     //subskrybowanie
     //SteamUGC()->SubscribeItem(PublishedFileId_t nPublishedFileID);
 
@@ -37,7 +42,7 @@ int main(int argc, char* argv[])
     //
     //usuwanie (TAK SAMO JAK POBIERANIE!!!)
     //SteamUGC()->DeleteItem(PublishedFileId_t nPublishedFileID)
-    //
+    //PublishedFileId_t
     //informacje o pobieraniu
     //SteamUGC()->GetItemDownloadInfo(PublishedFileId_t nPublishedFileID, uint64 *punBytesDownloaded, uint64 *punBytesTotal)
     //
@@ -57,25 +62,6 @@ int main(int argc, char* argv[])
         // jak widać
     //SteamUGC()->GetNumSubscribedItems();
     //
-    uint32 local_time_stamp;
-    uint64 size;
-    char* folder = new char[1024];
-    uint32 state = SteamUGC()->GetItemState(2822758266) ;
-    SteamUGC()->GetItemInstallInfo(2801060088, &size, folder, 1024 , &local_time_stamp);
-    cout << local_time_stamp << " " << state << " " << folder << " " << size << endl;
-
-    cout << k_EItemStateNone << " " << k_EItemStateSubscribed << " " << k_EItemStateLegacyItem << " " << k_EItemStateInstalled << " " << k_EItemStateNeedsUpdate << " " << k_EItemStateDownloading << " " << k_EItemStateDownloadPending << endl;
-
-    cout << endl;
-
-    PublishedFileId_t * wsids = new PublishedFileId_t[SteamUGC()->GetNumSubscribedItems()];
-
-    SteamUGC()->GetSubscribedItems(wsids,SteamUGC()->GetNumSubscribedItems());
-
-    for ( size_t i = 0 ; i < SteamUGC()->GetNumSubscribedItems() ; i++)
-    {
-        cout << "For: " << wsids[i] << " state is: " << SteamUGC()->GetItemState(wsids[i]) << endl;
-    }
     SteamAPI_Shutdown();
 
     //if (strcmp(argv[1],"-s") == 0) //subscribing item
