@@ -163,7 +163,7 @@ bool parse_input_options (
 {
     cxxopts::Options options("WorkshopControl", "Simple tool for managing your subscriptions in Steam Workshop");
 
-    options.add_options()
+    options.add_options() // add options < cpu heavy {{{1
         ("h,help", "Show this message.")
         ("f,force_download", "Checks for updates of already subscibed content. If it is not up to date, begins download. To use with --subscribe or --sync switches.", cxxopts::value<bool>()->default_value("false"))
         ("F,force_deletion", "Sometimes Steam leaves content undeleted after unsubscription. With this switch app will try to force deletion. To use with --sync and --unsubscribe switches.", cxxopts::value<bool>()->default_value("false"))
@@ -178,7 +178,7 @@ bool parse_input_options (
         ("u,unsubscribe", "\"<ItemIDs>\" Unsubscribe content.", cxxopts::value<vector<string>>() )
         ("S,sync", "\"<ItemIDs>\" Subscribes missing content, unsubscribes remaining, downloaded content not passed on the list. Please note that passing this argument makes --subscribe behaving like sync.\nAt least one of three mentioned above have to be armed for app to work. Pass itemIDs separated by commas.", cxxopts::value<vector<string>>() )
         ;
-
+// add options < close 1}}}
     options.parse_positional({"appid"});
     options.positional_help("<appid> [-s item1,item2,...|-S item1,item2,...|-u item1,item2,...]");
     options.allow_unrecognised_options();
