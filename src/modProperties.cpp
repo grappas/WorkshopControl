@@ -1,6 +1,8 @@
 #include "modProperties.hpp"
 #include <cstdio>
 #include <cstring>
+#include <thread>
+#include <chrono>
 
 modProperties::modProperties(const PublishedFileId_t parsedItemID, bool ommit_item_errors)
 {
@@ -45,8 +47,9 @@ modProperties::modProperties(const PublishedFileId_t parsedItemID, bool ommit_it
     {
         proper_item = true;
         SteamUGCDetails_t details;
+        this_thread::sleep_for(chrono::milliseconds(3000));
         SteamUGC()->GetQueryUGCResult(handle, 0, &details);
-        item_name.assign(details.m_rgchTitle,k_cchPublishedDocumentTitleMax);
+        item_name.assign(details.m_rgchTitle,strlen(details.m_rgchTitle));
         remote_time_stamp = details.m_rtimeUpdated;
     }
 
